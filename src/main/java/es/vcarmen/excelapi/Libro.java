@@ -151,78 +151,79 @@ public class Libro {
      * @throws IOException donde enviamos el mensaje de error
      */
     public void load() throws ExcelApiException, IOException {
-
-        //Abrimos un flujo de datos desde archivo
-        FileInputStream file = new FileInputStream(new File(nombreArchivo));
-        //Creamos un libro excel con el flujo de datos
-        XSSFWorkbook libroExcel = new XSSFWorkbook(file);
-        //Creamos una libro de la Clase interna Libro y lo inicializamos a null;
-        Libro libro = new Libro();
-        //Creamos una hoja de la Clase interna Hoja y lo inicializamos a null;
-        Hoja hoja = null;
-        // Inicializamos contadores
-        int numeroDeFilas = 0;
-        int numeroDeColumnas = 0;
-        // inicializamos una Fila(Row) y Columna(Cell)
-        Row fila = null;
-        Cell celda = null;
-        //Para cada una de las hojas del Libro del archivo de excel.xlsx
-        for (Sheet sheet : libroExcel) {
-            Iterator<Row> IteraFilas = sheet.iterator();
-            // Mientras existan filas a veriguamos el numero de filas máximo de esta hoja
-            while (IteraFilas.hasNext()) {
-                fila = IteraFilas.next();
-                numeroDeFilas++;
-                Iterator<Cell> IteraCeldas = fila.cellIterator();
-                numeroDeColumnas = 0;
-                // mientras la fila tenga columnas averiguamos el numero de columnas máximo de esta hoja
-                while (IteraCeldas.hasNext()) {
-                    celda = IteraCeldas.next();
-                    numeroDeColumnas++;
-                }
-            }
-            // Creamos una Hoja con el nombre de la hoja del fichero, las filas de esta hoja y las columnas de esta hoja
-            hoja = new Hoja(sheet.getSheetName(), numeroDeFilas, numeroDeColumnas);
-            numeroDeFilas = 0;
-            // Para cada fila de la hoja de leida del archivo
-            for (Row row : sheet) {
-                // para cada columna que tenga la fila del archivo
-                for (Cell cell : row) {
-                    // En función del tipo de dato que tenga esta celda (fila,columna)
-                    // Colocamos el dato de la celda del libro leido en la misma posición de la Hoja que estamos escribiendo en el POJO
-                    switch (cell.getCellTypeEnum()) {
-
-                        case _NONE:
-                            break;
-                        case NUMERIC:
-                            if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                                hoja.setDatos(cell.getDateCellValue().toString(), row.getRowNum(), cell.getColumnIndex());
-                            } else {
-                                hoja.setDatos(cell.getNumericCellValue() + "", row.getRowNum(), cell.getColumnIndex());
-                            }
-                            break;
-                        case STRING:
-                            hoja.setDatos(cell.getStringCellValue(), row.getRowNum(), cell.getColumnIndex());
-                            break;
-                        case FORMULA:
-                            hoja.setDatos(cell.getCellFormula(), row.getRowNum(), cell.getColumnIndex());
-                            break;
-                        case BLANK:
-                            hoja.setDatos("", row.getRowNum(), cell.getColumnIndex());
-                            break;
-                        case BOOLEAN:
-                            hoja.setDatos(cell.getBooleanCellValue() + "", row.getRowNum(), cell.getColumnIndex());
-                            break;
-                        case ERROR:
-                            hoja.setDatos(cell.getErrorCellValue() + "", row.getRowNum(), cell.getColumnIndex());
-                            break;
-                        default:
-                            hoja.setDatos(cell.getDateCellValue().toString(), row.getRowNum(), cell.getColumnIndex());
+        try {
+            //Abrimos un flujo de datos desde archivo
+            FileInputStream file = new FileInputStream(new File(nombreArchivo));
+            //Creamos un libro excel con el flujo de datos
+            XSSFWorkbook libroExcel = new XSSFWorkbook(file);
+            //Creamos una hoja de la Clase interna Hoja y lo inicializamos a null;
+            Hoja hoja = null;
+            // Inicializamos contadores
+            int numeroDeFilas = 0;
+            int numeroDeColumnas = 0;
+            // inicializamos una Fila(Row) y Columna(Cell)
+            Row fila = null;
+            Cell celda = null;
+            //Para cada una de las hojas del Libro del archivo de excel.xlsx
+            for (Sheet sheet : libroExcel) {
+                Iterator<Row> IteraFilas = sheet.iterator();
+                // Mientras existan filas a veriguamos el numero de filas máximo de esta hoja
+                while (IteraFilas.hasNext()) {
+                    fila = IteraFilas.next();
+                    numeroDeFilas++;
+                    Iterator<Cell> IteraCeldas = fila.cellIterator();
+                    numeroDeColumnas = 0;
+                    // mientras la fila tenga columnas averiguamos el numero de columnas máximo de esta hoja
+                    while (IteraCeldas.hasNext()) {
+                        celda = IteraCeldas.next();
+                        numeroDeColumnas++;
                     }
                 }
+                // Creamos una Hoja con el nombre de la hoja del fichero, las filas de esta hoja y las columnas de esta hoja
+                hoja = new Hoja(sheet.getSheetName(), numeroDeFilas, numeroDeColumnas);
+                numeroDeFilas = 0;
+                // Para cada fila de la hoja de leida del archivo
+                for (Row row : sheet) {
+                    // para cada columna que tenga la fila del archivo
+                    for (Cell cell : row) {
+                        // En función del tipo de dato que tenga esta celda (fila,columna)
+                        // Colocamos el dato de la celda del libro leido en la misma posición de la Hoja que estamos escribiendo en el POJO
+                        switch (cell.getCellTypeEnum()) {
+
+                            case _NONE:
+                                break;
+                            case NUMERIC:
+                                if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                                    hoja.setDatos(cell.getDateCellValue().toString(), row.getRowNum(), cell.getColumnIndex());
+                                } else {
+                                    hoja.setDatos(cell.getNumericCellValue() + "", row.getRowNum(), cell.getColumnIndex());
+                                }
+                                break;
+                            case STRING:
+                                hoja.setDatos(cell.getStringCellValue(), row.getRowNum(), cell.getColumnIndex());
+                                break;
+                            case FORMULA:
+                                hoja.setDatos(cell.getCellFormula(), row.getRowNum(), cell.getColumnIndex());
+                                break;
+                            case BLANK:
+                                hoja.setDatos("", row.getRowNum(), cell.getColumnIndex());
+                                break;
+                            case BOOLEAN:
+                                hoja.setDatos(cell.getBooleanCellValue() + "", row.getRowNum(), cell.getColumnIndex());
+                                break;
+                            case ERROR:
+                                hoja.setDatos(cell.getErrorCellValue() + "", row.getRowNum(), cell.getColumnIndex());
+                                break;
+                            default:
+                                hoja.setDatos(cell.getDateCellValue().toString(), row.getRowNum(), cell.getColumnIndex());
+                        }
+                    }
+                }
+                // añadimos la hoja al Libro del POJO
+                this.addHoja(hoja);
             }
-            // añadimos la hoja al Libro del POJO
-            libro.addHoja(hoja);
+        } catch (IOException e) {
+            throw new ExcelApiException("Problema de lectura del archivo " + nombreArchivo + " " + e);
         }
     }
 
@@ -260,7 +261,7 @@ public class Libro {
             }
         }
         try {
-            testExtension();
+            this.testExtension();
             try (FileOutputStream out = new FileOutputStream(this.nombreArchivo)) {
                 wb.write(out);
             }
@@ -272,7 +273,9 @@ public class Libro {
     }
 
     /**
-     * Método save sobrecargado, igual que save() pero con el nombre del archivo a escribir
+     * Método save sobrecargado, igual que save() pero con el nombre del archivo
+     * a escribir
+     *
      * @param filename el nombre del fichero a escribir
      * @throws ExcelApiException donde enviamos el mensaje de error
      */
@@ -281,6 +284,7 @@ public class Libro {
         testExtension();
         this.save();
     }
+
     /**
      * Método para comprobar que la extensión del archivo a escribir es correcto
      */
